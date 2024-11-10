@@ -1,0 +1,64 @@
+PROGRAM caesar
+{
+  Copyright(C)2024 MT
+
+  Implements a caesar cipher.
+
+  Note - A Caesar cipher with a key value is equlivelent to ROT-13.
+
+  $ algol caesar
+  $ link caesar
+  $ run caesar
+  "The quick brown fox jumps over the lazy dog"
+  "Wkh txlfn eurzq ira mxpsv ryhu wkh odcb grj"
+  "The quick brown fox jumps over the lazy dog"
+
+  https://en.wikipedia.org/wiki/caesar_cipher
+
+  This  program is free software: you can redistribute it and/or modify  it
+  under  the  terms of the GNU General Public License as published  by  the
+  Free  Software  Foundation, either version 3 of the License, or (at  your
+  option) any later version.
+
+  This  program  is  distributed in the hope that it will  be  useful,  but
+  WITHOUT   ANY   WARRANTY;   without  even   the   implied   warranty   of
+  MERCHANTABILITY  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  Public License for more details.
+
+  You  should have received a copy of the GNU General Public License  along
+  with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  14 Oct 24 0.1   001 - Because why not! - MT
+
+}
+
+BEGIN
+  PROC encode = (STRING plain, INT key) STRING:
+  BEGIN
+    [UPB plain]CHAR ciph;
+    FOR i TO UPB plain DO
+      CHAR c = plain[i];
+      ciph[i]:=
+        IF "A" <= c AND c <= "Z" THEN
+          REPR (ABS "A" + ((ABS c - ABS "A") + key) MOD 26)
+        ELIF "a" <= c AND c <= "z" THEN
+          REPR (ABS "a" + ((ABS c - ABS "a") + key) MOD 26)
+        ELSE
+          c
+        FI
+    OD;
+    ciph
+  END; {encode}
+
+  STRING text;
+
+  text := "The quick brown fox jumps over the lazy dog";
+  print (("""" + text + """", newline));
+  text := encode(text, 3);
+  print (("""" + text + """", newline));
+  text := encode(text, -3);
+  print (("""" + text + """", newline))
+
+END
+
+FINISH.

@@ -1,0 +1,96 @@
+PROGRAM vigenere
+{
+  Copyright(C)2024 MT
+
+  Implements a Vigenere cypher, ignoring any non-alphabetic and using only 
+  uppercase.  It keys and text do not have to be the same length.
+
+  $ algol vigenere
+  $ link vigenere
+  $ run vigenere
+  "The quick brown fox jumps over the lazy dog"
+  "MUOJQIQSRKVTHHHQUOPIHONZPMBFVXSXQYZ"
+  "THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG"
+
+  https://en.wikipedia.org/wiki/vigenere_cipher
+  https://rosettacode.org/wiki/vigenere_cipher
+
+  This  program is free software: you can redistribute it and/or modify  it
+  under  the  terms of the GNU General Public License as published  by  the
+  Free  Software  Foundation, either version 3 of the License, or (at  your
+  option) any later version.
+
+  This  program  is  distributed in the hope that it will  be  useful,  but
+  WITHOUT   ANY   WARRANTY;   without  even   the   implied   warranty   of
+  MERCHANTABILITY  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  Public License for more details.
+
+  You  should have received a copy of the GNU General Public License  along
+  with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  10 Nov 24 0.1   001 - Initial version (taken from rosetta code) - MT
+                  002 - Modified for VAX/VMS ALGOL-68 - MT
+
+}
+
+BEGIN
+
+  STRING key := "";
+
+  PROC vigenere cipher = (REF STRING key)VOID: { Generate the cipher key }
+    FOR i FROM LWB key TO UPB key DO
+      IF key[i] >= "A" AND key[i] <= "Z" THEN
+        key +:= key[i] FI;
+      IF key[i] >= "a" AND key[i] <= "z" THEN
+        key +:= REPR(ABS key[i] + ABS"A" - ABS"a") FI
+    OD;
+
+  PROC encrypt = (STRING text)STRING:
+  BEGIN
+    STRING out := "";
+
+    INT j := LWB text;
+    FOR i FROM LWB text TO UPB text DO
+      CHAR c := text[i];
+
+      IF c >= "a" AND c <= "z" THEN
+        c := REPR(ABS c + (ABS"A" - ABS"a")) FI;
+      IF c >= "A" AND c <= "Z" THEN
+        out +:= REPR((ABS c + ABS key[j] - 2*ABS"A") MOD 26 + ABS"A");
+        j := j MOD UPB key + 1
+      FI
+    OD;
+    out
+  END;
+
+  PROC decrypt = (STRING text)STRING:
+  BEGIN
+    STRING out;
+
+    INT j := LWB text;
+    FOR i FROM LWB text TO UPB text DO
+      CHAR c := text[i];
+
+      IF c >= "a" AND c <= "z" THEN
+        c := REPR(ABS c + (ABS"A" - ABS"a")) FI;
+      IF c >= "A" AND c <= "Z" THEN
+        out +:= REPR((ABS c - ABS key[j] + 26) MOD 26 + ABS"A");
+        j := j MOD UPB key + 1
+      FI
+    OD;
+    out
+  END;
+
+  key:="VIGENERECIPHER";  { Should be uppercase }
+  vigenere cipher(key);   { Generate encryption key }
+
+  STRING original := "The quick brown fox jumps over the lazy dog";
+  STRING encrypted := encrypt(original);
+  STRING decrypted := decrypt(encrypted);
+
+  print(("""" + original + """", newline));
+  print(("""" + encrypted + """", new line));
+  print(("""" + decrypted + """", new line))
+END
+
+FINISH.

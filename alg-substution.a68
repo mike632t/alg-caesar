@@ -1,0 +1,65 @@
+PROGRAM substitution
+{
+  Copyright(C)2020 - MT
+
+  Implements a simple substitution cipher. 
+
+  $ algol substitution
+  $ link substitution
+  $ run substitution
+  "The quick brown fox jumps over the lazy dog"
+  "Cqx ojrhz talcg klf wjeyu lpxa bqx sdvi nlm"
+  "The quick brown fox jumps over the lazy dog"
+
+  https://en.wikipedia.org/wiki/substitution_cipher
+  https://rosettacode.org/wiki/substitution_cipher
+
+  This  program is free software: you can redistribute it and/or modify  it
+  under  the  terms of the GNU General Public License as published  by  the
+  Free  Software  Foundation, either version 3 of the License, or (at  your
+  option) any later version.
+
+  This  program  is  distributed in the hope that it will  be  useful,  but
+  WITHOUT   ANY   WARRANTY;   without  even   the   implied   warranty   of
+  MERCHANTABILITY  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+  Public License for more details.
+
+  You  should have received a copy of the GNU General Public License  along
+  with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  20 Oct 24 0.1   001 - I like symmetry! - MT
+
+}
+
+BEGIN
+  STRING original   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  STRING substitute = "dthnxkmqrwzseglyoaubjpcfivTKXMGVUPOIRFDEJZNYWCAQSLBH";
+  
+  PROC encode = (STRING text, STRING original, STRING substitute) STRING:
+  BEGIN
+    [UPB text] CHAR cipher text;
+    FOR count TO UPB text DO
+      CHAR char = text[count];
+      INT position := 0;
+      cipher text[count]:=
+        IF char in string(char, position, original) THEN { char in string is true if char is found in text and sets position }       
+          substitute[position]
+        ELSE
+          char
+        FI
+    OD;
+    cipher text
+  END; {encode}
+
+  STRING text;
+
+  text := "The quick brown fox jumps over the lazy dog";
+  print (("""" + text + """", newline));
+  text := encode(text, original, substitute);
+  print (("""" + text + """", newline));
+  text := encode(text, substitute, original);
+  print (("""" + text + """", newline))
+
+END
+
+FINISH.
